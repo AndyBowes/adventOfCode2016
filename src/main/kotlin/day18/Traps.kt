@@ -12,6 +12,6 @@ fun generateLines(firstLine: String, n: Int) = generateSequence(firstLine){ gene
 fun countSafe(lines: List<String>): Int = lines.map { it.count { c -> c =='.' } }.sum()
 
 fun main(args: Array<String>) {
-    val lines = generateLines(".^^^.^.^^^.^.......^^.^^^^.^^^^..^^^^^.^.^^^..^^.^.^^..^.^..^^...^.^^.^^^...^^.^.^^^..^^^^.....^....", 400000)
+    val lines = generateLines(".^^^.^.^^^.^.......^^.^^^^.^^^^..^^^^^.^.^^^..^^.^.^^..^.^..^^...^.^^.^^^...^^.^.^^^..^^^^.....^....", 40)
     println(countSafe(lines))
 }
