@@ -31,17 +31,37 @@ class ScrambledSpec : FeatureSpec() {
                 "abcde".rotateRight(4) shouldEqual "bcdea"
             }
         }
+        feature("Apply individual operations"){
+
+        }
         feature("Apply Instructions") {
+            scenario("Swap positions"){
+                applyOperation("abcde", "swap position 4 with position 0") shouldBe "ebcda"
+            }
+            scenario("Swap letters"){
+                applyOperation("abcde", "swap letter d with letter b") shouldEqual "adcbe"
+            }
+            scenario("Reverse section"){
+                applyOperation("abcde", "reverse positions 2 through 4") shouldEqual "abedc"
+            }
+            scenario("Rotate left"){
+                applyOperation("abcde", "rotate left 2 steps") shouldEqual "cdeab"
+            }
+            scenario("Rotate right"){
+                applyOperation("abcde", "rotate right 1 steps") shouldEqual "eabcd"
+            }
+
             scenario("Sample Data") {
                 val instructions = listOf("swap position 4 with position 0",
                         "swap letter d with letter b",
                         "reverse positions 0 through 4",
-                        "rotate left 1",
+                        "rotate left 1 steps",
                         "move position 1 to position 4",
                         "move position 3 to position 0",
                         "rotate based on position of letter b",
                         "rotate based on position of letter d")
                 applyInstructions("abcde", instructions) shouldEqual "decab"
+
             }
         }
     }

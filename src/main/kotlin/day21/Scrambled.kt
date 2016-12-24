@@ -1,5 +1,6 @@
 package day21
 
+import util.readResourceLines
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -8,8 +9,8 @@ val rotateLetter: Pattern = Pattern.compile("rotate based on position of letter 
 val swapPositions: Pattern = Pattern.compile("swap position (\\d) with position (\\d)")
 val movePositions: Pattern = Pattern.compile("move position (\\d) to position (\\d)")
 val swapLetters: Pattern = Pattern.compile("swap letter (.) with letter (.)")
-val rotateRight: Pattern = Pattern.compile("rotate right (\\d) steps")
-val rotateLeft: Pattern = Pattern.compile("rotate left (\\d) steps")
+val rotateRight: Pattern = Pattern.compile("rotate right (\\d) steps{0,1}")
+val rotateLeft: Pattern = Pattern.compile("rotate left (\\d) steps{0,1}")
 
 val instructionSet: Map<Pattern, (String, Matcher) -> String> =
         mapOf(
@@ -22,8 +23,25 @@ val instructionSet: Map<Pattern, (String, Matcher) -> String> =
                 movePositions to { a: String, b: Matcher -> a.movePositions(b.group(1).toInt(), b.group(2).toInt()) }
         )
 
+val reverseInstructionSet : Map<Pattern, (String, Matcher) -> String> =
+        mapOf(
+                reversePos to { a: String, b: Matcher -> a.reversePositions(b.group(1).toInt(), b.group(2).toInt()) },
+                rotateLetter to { a: String, b: Matcher -> a.rotateLetter(b.group(1)[0]) },
+                swapPositions to { a: String, b: Matcher -> a.swapPositions(b.group(1).toInt(), b.group(2).toInt()) },
+                swapLetters to { a: String, b: Matcher -> a.swapChars(b.group(1)[0], b.group(2)[0]) },
+                rotateRight to { a: String, b: Matcher -> a.rotateLeft(b.group(1).toInt()) },
+                rotateLeft to { a: String, b: Matcher -> a.rotateRight(b.group(1).toInt()) },
+                movePositions to { a: String, b: Matcher -> a.movePositions(b.group(2).toInt(), b.group(1).toInt()) }
+        )
+
 fun applyOperation(acc: String, instruction: String): String {
     return instructionSet.entries.map { Pair(it.key.matcher(instruction)!!, it.value) }
+            .filter { it.first.matches() }.take(1)
+            .map { it.second(acc, it.first) }.first()
+}
+
+fun reverseOperation(acc: String, instruction: String) : String {
+    return reverseInstructionSet.entries.map { Pair(it.key.matcher(instruction)!!, it.value) }
             .filter { it.first.matches() }.take(1)
             .map { it.second(acc, it.first) }.first()
 }
@@ -39,7 +57,7 @@ fun String.swapChars(first: Char, second: Char) = this.map {
 
 fun String.swapPositions(pos1: Int, pos2: Int) = this.swapChars(this[pos1], this[pos2])
 fun String.rotateLeft(move: Int) = this.substring(move) + this.substring(0, move)
-fun String.rotateRight(move: Int) = this.rotateLeft(this.length - move)
+fun String.rotateRight(move: Int) = this.rotateLeft(((this.length - move) + this.length) % this.length)
 fun String.rotateLetter(c: Char): String {
     var pos = this.indexOf(c) + 1
     if (pos > 4) pos += 1
@@ -47,11 +65,16 @@ fun String.rotateLetter(c: Char): String {
 }
 
 fun String.movePositions(pos1: Int, pos2: Int): String {
-    return this.substring(0, pos1) + this.substring(pos1 + 1)
+    val temp = this.substring(0, pos1) + this.substring(pos1 + 1)
+    return temp.substring(0,pos2) + this[pos1] + temp.substring(pos2)
 }
 
 fun applyInstructions(initial: String, instructions: List<String>): String = instructions.fold(initial, ::applyOperation)
+fun reverseInstructions(initial: String, instructions: List<String>): String = instructions.foldRight(initial, ::reverseOperation)
 
 fun main(args: Array<String>) {
-    applyInstructions("abcde", listOf())
+    //applyInstructions("abcde", listOf())
+    val instructions = readResourceLines("day21/instructions.txt")
+//    println(applyInstructions("abcdefgh",instructions))
+    println(reverseInstructions("fbgdceah",instructions))
 }

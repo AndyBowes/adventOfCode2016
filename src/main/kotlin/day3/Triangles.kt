@@ -10,6 +10,7 @@ fun readResource(path: String): Stream<String> {
 
 fun String.replaceMultipleSpaces() = this.trim().replace("\\s+".toRegex(), " ")
 fun String.toSortedInts() = this.split(" ").map(String::toInt).sorted()
+fun String.toUnsortedInts() = this.split(" ").map(String::toInt)
 fun List<Int>.isTriangle(): Boolean {
     val sides = this.sorted()
     return (sides.get(0) + sides.get(1) > sides.get(2))
@@ -18,6 +19,7 @@ fun List<Int>.isTriangle(): Boolean {
 fun getTriangles(path: String) = getLines(path).filter{ it.isTriangle() }
 
 fun getLines(path: String) = readResource(path).map { it.replaceMultipleSpaces().toSortedInts() }
+fun getUnsortedLines(path: String) = readResource(path).map { it.replaceMultipleSpaces().toUnsortedInts()}
 
 fun countTriangles(path: String): Long =
     getTriangles(path).count()
@@ -39,9 +41,9 @@ private class BatchingSequence<T>(val source: Sequence<T>, val batchSize: Int) :
 fun List<List<Int>?>.verticalTriangles() =
     this.asSequence().batch(3).toList()
             .filter { it.size == 3 }
-            .map { listOf( listOf<Int>(it[0]!![0],it[1]!![0],it[2]!![0]),
-                listOf<Int>(it[0]!![1],it[1]!![1],it[2]!![1]),
-                listOf<Int>(it[0]!![2],it[1]!![2],it[2]!![2]))}.flatten()
+            .map { listOf( listOf(it[0]!![0],it[1]!![0],it[2]!![0]),
+                listOf(it[0]!![1],it[1]!![1],it[2]!![1]),
+                listOf(it[0]!![2],it[1]!![2],it[2]!![2]))}.flatten()
 
 fun List<List<Int>?>.countVerticalTriangles() =
         this.verticalTriangles().count{ it.isTriangle() }

@@ -21,8 +21,9 @@ class TriangleTest : FeatureSpec (){
             }
 
             scenario("Vertical Triangles"){
-                val t: MutableList<List<Int>?>? = getLines("day3/triangles.txt").collect(toList<List<Int>?>())
-                println(t?.toList()?.verticalTriangles()!!.filter { it.isTriangle() }.count())
+                val t: MutableList<List<Int>?>? = getUnsortedLines("day3/triangles.txt").collect(toList<List<Int>?>())
+                val vTriangles = t?.toList()?.verticalTriangles()!!
+                println(vTriangles.filter { it.isTriangle() }.count())
             }
 
         }
